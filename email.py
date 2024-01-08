@@ -48,7 +48,7 @@ def send_email(**kwargs):
     #email.set_content(message, subtype="html")
 
     ti = kwargs['ti']
-    password = "upzkqbwxnmwfcptw "
+    password = "****************************"
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()
     s.login('sudharshangcp@gmail.com',password)
