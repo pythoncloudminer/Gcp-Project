@@ -51,7 +51,10 @@ def send_email(**kwargs):
     password = "****************************"
     s = smtplib.SMTP('smtp.gmail.com', 587)
     s.starttls()
-    s.login('sudharshangcp@gmail.com',password)
+    try:
+        s.login('sudharshangcp@gmail.com',password)
+    except Exception e :
+        print("Login Error":str(e))
     email_dict = ti.xcom_pull(task_ids = "format_email")
     for i in email_dict.items():
         key = i[0]
@@ -62,8 +65,11 @@ def send_email(**kwargs):
         for mail in vals:
             email.set_content(message, subtype="html")
             email["To"] = mail
-            s.sendmail('sudharshangcp@gmail.com',mail,email.as_string())
-            del email["To"]
+            try:
+                s.sendmail('sudharshangcp@gmail.com',mail,email.as_string())
+                del email["To"]
+            except:
+                print(f"Error while sending email to {mail}")
 
 
 
