@@ -50,7 +50,10 @@ def send_email(**kwargs):
     ti = kwargs['ti']
     password = "****************************"
     s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls()
+    try:
+        s.starttls()
+    except Exception e :
+        print("TLS connection error", str(e))
     try:
         s.login('sudharshangcp@gmail.com',password)
     except Exception e :
