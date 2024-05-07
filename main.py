@@ -38,7 +38,7 @@ def fetch_data(page):
 
 def extract_data_from_item(item):
     keys_to_extract = ["id", "employeeId", "timestamp", "verb", "object", "type", "status"]
-    return pd.createDataFrame({key: item.get(key) for key in keys_to_extract})
+    return pd.DataFrame({key: item.get(key) for key in keys_to_extract})
 
 def extract_statements():
     combined_df = pd.DataFrame()
