@@ -117,12 +117,12 @@ def extract_scores(df):
         res = requests.post(url, headers=headers, json=body).json()
         tmp ={}
         tmp["courseId"] = i
-        tmp["startedDate"] = res["items"]["started"]
-        tmp["completedDate"] = res["items"]["ended"]
-        tmp["completedStatus"] = res["items"]["completed"]
-        tmp["status"] = res["items"]["status"]
-        tmp["score"] = res["items"]["score"]
-        tmp["attempt"] = res["items"]["attempt"]
+        tmp["startedDate"] = res["items"][0]["started"]
+        tmp["completedDate"] = res["items"][0]["ended"]
+        tmp["completedStatus"] = res["items"][0]["completed"]
+        tmp["status"] = res["items"][0]["status"]
+        tmp["score"] = res["items"][0]["score"]
+        tmp["attempt"] = res["items"][0]["attempt"]
         scores_details.append(tmp)
     return pd.DataFrame(tmp)
 
