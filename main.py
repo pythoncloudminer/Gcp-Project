@@ -124,7 +124,7 @@ def extract_scores(df):
         tmp["score"] = res["items"]["score"]
         tmp["attempt"] = res["items"]["attempt"]
         scores_details.append(tmp)
-    return pd.createDataFrame(tmp)
+    return pd.DataFrame(tmp)
 
 scores_df = extract_scores(statements_details_df)
 
