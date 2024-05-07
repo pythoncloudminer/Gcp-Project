@@ -38,10 +38,10 @@ def fetch_data(page):
 
 def extract_data_from_item(item):
     keys_to_extract = ["id", "employeeId", "timestamp", "verb", "object", "type", "status"]
-    return pd.DataFrame({key: item.get(key) for key in keys_to_extract})
+    return {key: item.get(key) for key in keys_to_extract}
 
 def extract_statements():
-    combined_df = pd.DataFrame()
+    combined_df = []
     page = 0
     empty_responses_count = 0
     with concurrent.futures.ThreadPoolExecutor(max_workers=MAX_CONCURRENT_REQUESTS) as executor:
@@ -55,14 +55,14 @@ def extract_statements():
                     empty_responses_count = 0
                     for item in data:
                         extracted_data = extract_data_from_item(item)
-                        combined_df = pd.concat([combined_df,extracted_data], ignore_index=True)
+                        combined_df.append(extracted_data)
                     page += 1
                 else:
                     logging.warning(f"No data received from page {page}")
                     empty_responses_count += 1
                     if empty_responses_count >= 5:
                         break
-    return combined_df
+    return pd.DataFrame(combined_df)
 
 def fetch_statement_details(id, employeeId, is_course):
     additional_data_url = f"{API_URL}/{id}"
