@@ -55,7 +55,7 @@ def extract_statements():
                     empty_responses_count = 0
                     for item in data:
                         extracted_data = extract_data_from_item(item)
-                        combined_df = combined_df.append(extracted_data, ignore_index=True)
+                        combined_df = pd.concat([combined_df,extracted_data], ignore_index=True)
                     page += 1
                 else:
                     logging.warning(f"No data received from page {page}")
