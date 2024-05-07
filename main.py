@@ -114,16 +114,21 @@ def extract_scores(df):
         body = {
             "aid": "",
         }
+        
         res = requests.post(url, headers=headers, json=body).json()
         tmp ={}
-        tmp["courseId"] = i
-        tmp["startedDate"] = res["items"][0]["started"]
-        tmp["completedDate"] = res["items"][0]["ended"]
-        tmp["completedStatus"] = res["items"][0]["completed"]
-        tmp["status"] = res["items"][0]["status"]
-        tmp["score"] = res["items"][0]["score"]
-        tmp["attempt"] = res["items"][0]["attempt"]
-        scores_details.append(tmp)
+        try:
+            tmp["courseId"] = i
+            tmp["startedDate"] = res["items"][0]["started"]
+            tmp["completedDate"] = res["items"][0]["ended"]
+            tmp["completedStatus"] = res["items"][0]["completed"]
+            tmp["status"] = res["items"][0]["status"]
+            tmp["score"] = res["items"][0]["score"]
+            tmp["attempt"] = res["items"][0]["attempt"]
+            scores_details.append(tmp)
+            print("data found")
+        except:
+            print(i, "no data")
     return pd.DataFrame(tmp)
 
 scores_df = extract_scores(statement_details_df)
