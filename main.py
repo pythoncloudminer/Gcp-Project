@@ -126,8 +126,8 @@ def extract_scores(df):
         scores_details.append(tmp)
     return pd.DataFrame(tmp)
 
-scores_df = extract_scores(statements_details_df)
+scores_df = extract_scores(statement_details_df)
 
-transit_df = pd.merge(statements_df, scores_df, on="courseId", how="left")
+transit_df = pd.merge(statements_df, scores_df, on="courseId", how="inner")
 
 final_df = pd.merge(transit_df, statement_details_df, on="id", how="inner")
