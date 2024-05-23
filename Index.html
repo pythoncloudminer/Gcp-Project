@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POC</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 25%;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            overflow-x: hidden;
+            padding-top: 20px;
+            background-color: #2c3e50;
+        }
+
+        .sidebar h2 {
+            color: white;
+            text-align: center;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            padding: 6px 8px;
+            background-color: #007bff;
+            border-radius: 10px;
+            margin: 20px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .sidebar a:hover {
+            background-color: #0056b3;
+        }
+
+        .search-box {
+            padding: 10px;
+            border: 1px solid #333;
+            font-size: 15px;
+            margin-right: 20px;
+            border-radius: 9px;
+        }
+
+        .header {
+            display: flex;
+            float: right;
+            padding: 10px;
+            justify-content: space-between;
+            padding-right: 3%;
+        }
+
+        .login-button {
+            background-color: transparent;
+            border: none;
+            font-size: 16px;
+        }
+
+        .main {
+            margin-left: 32%;
+            padding: 10px;
+        }
+
+        .ann-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            margin-top: 10%;
+        }
+
+        .courses-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            margin-top: 5%;
+        }
+
+        .ann-button {
+            background-color: #009688;
+            color: white;
+            padding: 40px;
+            text-decoration: none;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .ann-button:hover {
+            background-color: #00796b;
+        }
+
+        .dark-button-container {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            margin-top: 10%;
+            flex-wrap: wrap;
+        }
+
+        .dark-button {
+            background-color: #333;
+            color: white;
+            padding: 25px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 30px;
+            margin-right: 40px;
+            flex: 1 1 45%;
+            border-radius: 5px;
+        }
+
+        .welcome {
+            margin-top: 20%;
+            text-align: center;
+        }
+
+        #search-results-container {
+            margin-top: 20%;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .filters-button {
+            background-color: transparent;
+            border: none;
+            font-size: 22px;
+            color: white;
+        }
+
+        .filters-container {
+            text-align: center;
+            margin-top: 15%;
+        }
+
+        .favorite-button-container {
+            margin-top: 10%;
+            background-color: #e6f7ff;
+            margin-left: 9%;
+            margin-right: 9%;
+            border-radius: 5px;
+            padding: 8%;
+            min-height: 250px;
+
+            p {
+                margin-top: -5%;
+                margin-bottom: 5%;
+            }
+        }
+
+        .table-container {
+            margin: 20px;
+            overflow-x: auto;
+            margin-top: 10%;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th,
+        td {
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .in-progress {
+            /* color: hwb(287 0% 0%); */
+        }
+    </style>
+
+    <script>
+        var searchResults = []; // ["Course Title: Date Updated: Description"]; // should come from REST API
+        var isUserAuthenticated = true; // should come from REST API
+        var coursesData = ["In Progress", "In Progress", "In Progress"]; // should come from REST API
+        var favoriteList = [] // ["fav1"]; //should come from API
+
+
+        var welcomeElement = ""
+        var resultsContainer = "";
+        var resultsElement = "";
+        var filtersContainer = "";
+        var loginButton = "";
+        var loginUserSidebar = "";
+        var favoriteButtonContainer = "";
+        var darkButtonContainer = "";
+
+
+        var contextValue = 'TZgF5QdOpR2/hJbm0hUS7gUxaDTw97FFId+U24rVi3a9ZazVIPrfdZUtmL0F6/3APztBzNhE6+wXygSBALxv31GV5UWZi1Lu2/KZRKqMlBeaS9d6DS2Brqs11tFooede11BjeLi/RCl1h988P+BB0KBH+efTCmRRBcHaoN84NlXJowtMCvJMcZlwfzCbfpXVUCSK5B7Vlkq7LwrgecUs1rlnboMxP4o6NqRf5u6qQwR0xqIV5UPjRBKKUeq7W42jbLbyZGbKWD9MxpRJM3AutzakX+buqkMEZGhZ5QmelVE=';
+        var baseURL = "https://core-cisco.bravais.com/api/v3";
+
+
+        function fetchData(URL) {
+            return fetch(URL, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'aplication/json',
+                    'Bravais-prod-us-Context': contextValue,
+                },
+                // mode: 'no-cors'
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            }).then(data => {
+                return data;
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation: ', error);
+                throw error;
+            })
+        }
+
+        function handleFilters(
+            welcomeElement,
+            resultsContainer,
+            resultsElement,
+            searchResults,
+            isUserAuthenticated) {
+            if (searchResults.length && isUserAuthenticated) {
+                welcomeElement.classList.add("hidden")
+                resultsElement.innerHTML = '';
+                searchResults.forEach(function (result, index) {
+                    var resultDiv = document.createElement('div');
+                    const text = index === 0 ? `${result.title}: ${result.lastUpdated}: ${result.description}: ` : `${result.title} ${result.lastUpdated} ${result.description} `;
+                    resultDiv.textContent = text;
+                    resultsElement.appendChild(resultDiv);
+
+                    const br = document.createElement("br");
+                    resultsElement.appendChild(br)
+                });
+                resultsContainer.classList.remove("hidden");
+            } else {
+                welcomeElement.classList.remove("hidden");
+                resultsContainer.classList.add("hidden");
+            }
+        }
+
+        function handleUserView(
+            isUserAuthenticated,
+            loginButton,
+            filtersContainer,
+            loginUserSidebar,
+            coursesData,
+            searchResults,
+            favoriteList,
+            favoriteButtonContainer,
+            darkButtonContainer) {
+            // Authenticated user header, sideNav and dashboard
+            if (isUserAuthenticated) {
+                loginButton.innerText = "Log Out";
+                filtersContainer.classList.remove("hidden");
+                if (!searchResults.length) {
+                    loginUserSidebar.classList.remove("hidden");
+                    if (favoriteList.length) {
+                        favoriteList.forEach((item, index) => {
+                            var button = document.createElement('button');
+                            button.classList.add("ann-button");
+                            button.id = `fav-button${index + 1}`;
+                            button.textContent = item.itemName;
+                            favoriteButtonContainer.appendChild(button);
+                        })
+
+                        favoriteButtonContainer.classList.remove("hidden");
+                        darkButtonContainer.classList.add("hidden");
+                    } else {
+                        darkButtonContainer.classList.remove("hidden");
+                        favoriteButtonContainer.classList.add("hidden");
+                    }
+                    // favoriteList.length ? favoriteButtonContainer.classList.remove("hidden") : favoriteButtonContainer.classList.add("hidden")
+                    // !favoriteList.length ? darkButtonContainer.classList.remove("hidden") : darkButtonContainer.classList.add("hidden")
+                    if (coursesData && coursesData.length) {
+                        document.getElementById("ann-button1").textContent = coursesData[0];
+                        document.getElementById("ann-button2").textContent = coursesData[1];
+                        document.getElementById("ann-button3").textContent = coursesData[2];
+                    }
+                }
+
+            } else {
+                // Un Authenticated user header, sideNav and dashboard
+                loginButton.innerText = "Log In";
+                filtersContainer.classList.add("hidden");
+                loginUserSidebar.classList.add("hidden");
+            }
+        }
+
+        function fetchSearchResults(inputValue) {
+            const searchURL = `${baseURL}/search/?query=${inputValue}`;
+            return fetchData(searchURL).then(data => {
+                console.log('Data Received: ', data);
+                resultsElement.innerHTML = '';
+                searchResults = [];
+                searchResults.push({
+                    title: "Course Title",
+                    lastUpdated: 'Date Updated',
+                    description: 'Description'
+                })
+                data?.results?.forEach(item => {
+                    var obj = {
+                        title: item.name,
+                        lastUpdated: item.dateUpdated,
+                        description: item.description
+                    }
+                    searchResults.push(obj);
+                })
+                return;
+            }).catch(error => {
+                console.error('Error: ', error);
+            })
+        }
+
+        function handleDOM() {
+            // filter results
+            handleFilters(welcomeElement,
+                resultsContainer,
+                resultsElement,
+                searchResults,
+                isUserAuthenticated);
+
+            // User view handle
+            handleUserView(
+                isUserAuthenticated,
+                loginButton,
+                filtersContainer,
+                loginUserSidebar,
+                coursesData,
+                searchResults,
+                favoriteList,
+                favoriteButtonContainer,
+                darkButtonContainer);
+        }
+
+        function fetchFavorites() {
+            const searchURL = `${baseURL}/favorites`;
+            return fetchData(searchURL).then(data => {
+                console.log('Data Received: ', data);
+                favoriteList = data;
+                return;
+            }).catch(error => {
+                console.error('Error: ', error);
+            })
+        }
+
+        async function main() {
+            await fetchFavorites();
+
+            const inputField = document.getElementById("search-box");
+            inputField.addEventListener('input', async function (event) {
+                const inputValue = event.target.value;
+                !!inputValue && isUserAuthenticated ? await fetchSearchResults(inputValue) : searchResults = [];
+                handleDOM();
+            });
+
+            handleDOM();
+
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            welcomeElement = document.getElementById('welcome');
+            resultsContainer = document.getElementById('search-results-container');
+            resultsElement = document.getElementById('search-results');
+            filtersContainer = document.getElementById('filters-container');
+            loginButton = document.getElementById('login-button');
+            loginUserSidebar = document.getElementById('login-user-sidebar');
+            favoriteButtonContainer = document.getElementById('favorite-button-container');
+            darkButtonContainer = document.getElementById('dark-button-container');
+
+            main();
+        })
+    </script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Welcome Guest</h2>
+        <a href="#home">Home</a>
+        <a href="#content">Content Catalog</a>
+        <div id="login-user-sidebar" class="hidden">
+            <a href="#home">My Report Card</a>
+            <a href="#content">My Courses</a>
+        </div>
+        <div id="filters-container" class="filters-container hidden">
+            <button class="filters-button">Filters</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="header">
+            <input type="text" id="search-box" class="search-box" placeholder="Search...">
+            <button id="login-button" class="login-button">Log In</button>
+        </div>
+        <div id="welcome">
+            <div class="welcome hidden">
+                <h2>Welcome to the CPaas Learning Portal</h2>
+            </div>
+            <div class="ann-container hidden">
+                <button class="ann-button" id="ann-button1">Announcement 1</button>
+                <button class="ann-button" id="ann-button2">Announcement 2</button>
+                <button class="ann-button" id="ann-button3">Announcement 3</button>
+            </div>
+            <div class="myCourses">
+                <h2>My Courses</h2>
+            </div>
+            <div class="courses-container">
+                <button class="ann-button" id="course-button1">Most Recent Completion</button>
+                <button class="ann-button" id="course-button2">Most Recent Completion</button>
+                <button class="ann-button" id="course-button3">Most Recent Completion</button>
+            </div>
+            <div class="table-container hidden">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Percent</th>
+                            <th>Complete In Full/Yes?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="in-progress">
+                            <td>name</td>
+                            <td>Learning Path</td>
+                            <td>50%</td>
+                            <td>Completed</td>
+                        </tr>
+                        <tr class="in-progress">
+                            <td>name</td>
+                            <td>Learning Path</td>
+                            <td>100%</td>
+                            <td>In Progress</td>
+                        </tr>
+                        <tr class="in-progress">
+                            <td>name</td>
+                            <td>Learning Path</td>
+                            <td>10%</td>
+                            <td>In Progress</td>
+                        </tr>
+                        <tr class="in-progress">
+                            <td>name</td>
+                            <td>Learning Path</td>
+                            <td>50%</td>
+                            <td>In Progress</td>
+                        </tr>
+                        <tr class="in-progress">
+                            <td>name</td>
+                            <td>Learning Path</td>
+                            <td>50%</td>
+                            <td>In Progress</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="dark-button-container hidden" id="dark-button-container">
+                <button class="dark-button">AppD</button>
+                <button class="dark-button">TC2E</button>
+                <button class="dark-button">Space Center</button>
+                <button class="dark-button">Meraki</button>
+            </div>
+            <div class="favorite-button-container hidden" id="favorite-button-container">
+                <p>Favorites</p>
+                <!-- <button class="ann-button" id="fav-button1">fav 1</button> -->
+            </div>
+        </div>
+        <div id="search-results-container" class="hidden">
+            <h2>Search Results</h2>
+            <div id="search-results"></div>
+        </div>
+    </div>
+</body>
+
+</html>
