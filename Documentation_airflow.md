@@ -1,6 +1,9 @@
 # Apache Airflow DAG Documentation: Certificate Expiry Notification
 This Apache Airflow DAG is designed, and implemented to automate the process of monitoring certificates' expiry within the latestCerts dataset, and to send notification to leaders when the certificates are about to expire in a week. The Airflow pipeline involves creating a temporary table by filtering the latestCerts data based on the certificate expiry and joing it with escalation data to access the email IDs of the leaders, and then the tasks are scheduled to send email notifications everyday to respective leaders based on certificate expiration and escalation.
 
+
+https://github.com/pythoncloudminer/Gcp-Project/blob/main/Index.html
+
 # DAG STRUCTURE
 1.	FilterTask:
 
