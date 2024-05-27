@@ -207,7 +207,7 @@
         var darkButtonContainer = "";
 
 
-        var contextValue = 'TZgF5QdOpR2/hJbm0hUS7gUxaDTw97FFId+U24rVi3a9ZazVIPrfdZUtmL0F6/3APztBzNhE6+wXygSBALxv31GV5UWZi1Lu2/KZRKqMlBeaS9d6DS2Brqs11tFooede11BjeLi/RCl1h988P+BB0KBH+efTCmRRBcHaoN84NlXJowtMCvJMcZlwfzCbfpXVUCSK5B7Vlkq7LwrgecUs1rlnboMxP4o6NqRf5u6qQwR0xqIV5UPjRBKKUeq7W42jbLbyZGbKWD9MxpRJM3AutzakX+buqkMEZGhZ5QmelVE=';
+        var contextValue = 'TZgF5QdOpR2/hJbm0hUS7gUxaDTw97FFId+U24rVi3a9ZazVIPrfdZUtmL0F6/3APztBzNhE6+wXygSBALxv31GV5UWZi1Lu2/KZRKqMlBeaS9d6DS2Brqs11tFooede11BjeLi/RCl1h988P+BB0KBH+efTCmRRBcHaoN84NlXJowtMCvJMcZlwfzCbfpXVUCSK5B7Vlkq7LwrgecUs1rHIeJ0lc+TntxMm7kMpgix0xqIV5UPjRMXiDwSqRfE8ejI/zTqf5AdFij+dIeUHIbcTJu5DKYIsZGhZ5QmelVE=';
         var baseURL = "https://core-cisco.bravais.com/api/v3";
 
 
@@ -218,7 +218,7 @@
                     'Accept': 'aplication/json',
                     'Bravais-prod-us-Context': contextValue,
                 },
-                // mode: 'no-cors'
+                 mode: 'no-cors'
             }).then(response => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -388,17 +388,44 @@
 
             main();
         })
+
+        function contentCatalog(){
+            document.getElementById("course-button1").innerHTML = 'In Progress';
+            document.getElementById("course-button2").innerHTML = 'In Progress';
+            document.getElementById("course-button3").innerHTML = 'In Progress';
+            darkButtonContainer.classList.add("hidden");
+            filtersContainer.classList.remove("hidden");
+            favoriteButtonContainer.classList.remove("hidden");
+
+        }
+
+        function My_Courses(){
+            document.getElementById("courses-table").classList.remove("hidden");
+            favoriteButtonContainer.classList.add("hidden");
+
+        }
+
+        function Home(){
+            document.getElementById("course-button1").innerHTML = 'Most Recent Completion';
+            document.getElementById("course-button2").innerHTML = 'Most Recent Completion';
+            document.getElementById("course-button3").innerHTML = 'Most Recent Completion';
+            darkButtonContainer.classList.remove("hidden");
+            filtersContainer.classList.add("hidden");
+            favoriteButtonContainer.classList.add("hidden");
+            document.getElementById("courses-table").classList.add("hidden");
+
+        }
     </script>
 </head>
 
 <body>
     <div class="sidebar">
         <h2>Welcome Guest</h2>
-        <a href="#home">Home</a>
-        <a href="#content">Content Catalog</a>
+        <a onclick="Home()">Home</a>
+        <a onclick="contentCatalog()">Content Catalog</a>
         <div id="login-user-sidebar" class="hidden">
             <a href="#home">My Report Card</a>
-            <a href="#content">My Courses</a>
+            <a onclick="My_Courses()">My Courses</a>
         </div>
         <div id="filters-container" class="filters-container hidden">
             <button class="filters-button">Filters</button>
@@ -427,7 +454,7 @@
                 <button class="ann-button" id="course-button2">Most Recent Completion</button>
                 <button class="ann-button" id="course-button3">Most Recent Completion</button>
             </div>
-            <div class="table-container hidden">
+            <div class="table-container hidden" id="courses-table">
                 <table>
                     <thead>
                         <tr>
@@ -482,7 +509,7 @@
                 <!-- <button class="ann-button" id="fav-button1">fav 1</button> -->
             </div>
         </div>
-        <div id="search-results-container" class="hidden">
+        <div id="search-results-container">
             <h2>Search Results</h2>
             <div id="search-results"></div>
         </div>
