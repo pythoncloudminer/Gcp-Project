@@ -237,6 +237,30 @@
     <script>
         favoriteList = '';
 
+        var contextValue = 'TZgF5QdOpR2/hJbm0hUS7gUxaDTw97FFId+U24rVi3a9ZazVIPrfdZUtmL0F6/3APztBzNhE6+wXygSBALxv31GV5UWZi1Lu2/KZRKqMlBeaS9d6DS2Brqs11tFooede11BjeLi/RCl1h988P+BB0KBH+efTCmRRBcHaoN84NlXJowtMCvJMcZlwfzCbfpXVUCSK5B7Vlkq7LwrgecUs1rHIeJ0lc+TntxMm7kMpgix0xqIV5UPjRMXiDwSqRfE8ejI/zTqf5AdFij+dIeUHIbcTJu5DKYIsZGhZ5QmelVE=';
+        var baseURL = "https://core-cisco.bravais.com/api/v3";
+
+        function fetchData(URL) {
+            return fetch(URL, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'aplication/json',
+                    'Bravais-prod-us-Context': contextValue,
+                },
+                 //mode: 'no-cors'
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            }).then(data => {
+                return data;
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation: ', error);
+                throw error;
+            })
+        }
+
         isUserAuthenticated = true;
         function contentCatalog(){
             document.getElementById('landing_no_login').classList.add('hidden');
