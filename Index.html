@@ -83,7 +83,7 @@
             display: flex;
             justify-content: space-around;
             padding: 10px;
-            margin-top: 5%;
+            margin-top: 10%;
         }
 
         .ann-button {
@@ -129,7 +129,7 @@
         }
 
         #search-results-container {
-            margin-top: 20%;
+            margin-top: 1%;
         }
 
         .hidden {
@@ -187,129 +187,120 @@
 
         .in-progress {
             /* color: hwb(287 0% 0%); */
+
+        
         }
+        .iframe-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+}
+/* Style for the iframe */
+.iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none; /* Optional: remove border */
+}
+
+.button-container {
+        display: flex;
+        justify-content: space-between; /* Distribute items evenly across the width */
+        background-color: #1f26e8; /* Change container color */
+        padding: 10px; /* Add some padding */
+        width: 100%;
+        border-radius: 30px;
+    }
+    /* Styles for the button */
+    .curvy-button {
+        background-color: #b21cf3; /* Green */
+        border: none;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        
+        padding: 10px 30px;
+        cursor: pointer;
+        transition-duration: 0.4s;
+    }
+    /* Hover effect */
+    .curvy-button:hover {
+        background-color: #45a049; /* Darker green */
+    }
+
     </style>
-
     <script>
-        var searchResults = []; // ["Course Title: Date Updated: Description"]; // should come from REST API
-        var isUserAuthenticated = true; // should come from REST API
-        var coursesData = ["In Progress", "In Progress", "In Progress"]; // should come from REST API
-        var favoriteList = [] // ["fav1"]; //should come from API
+        favoriteList = '';
+
+        isUserAuthenticated = true;
+        function contentCatalog(){
+            document.getElementById('landing_no_login').classList.add('hidden');
+            document.getElementById('landing_login').classList.add('hidden');
+            document.getElementById('search-results').classList.add('hidden');
+            document.getElementById('content-catalog').classList.remove('hidden');
 
 
-        var welcomeElement = ""
-        var resultsContainer = "";
-        var resultsElement = "";
-        var filtersContainer = "";
-        var loginButton = "";
-        var loginUserSidebar = "";
-        var favoriteButtonContainer = "";
-        var darkButtonContainer = "";
+        }
 
-
-        var contextValue = 'TZgF5QdOpR2/hJbm0hUS7gUxaDTw97FFId+U24rVi3a9ZazVIPrfdZUtmL0F6/3APztBzNhE6+wXygSBALxv31GV5UWZi1Lu2/KZRKqMlBeaS9d6DS2Brqs11tFooede11BjeLi/RCl1h988P+BB0KBH+efTCmRRBcHaoN84NlXJowtMCvJMcZlwfzCbfpXVUCSK5B7Vlkq7LwrgecUs1rHIeJ0lc+TntxMm7kMpgix0xqIV5UPjRMXiDwSqRfE8ejI/zTqf5AdFij+dIeUHIbcTJu5DKYIsZGhZ5QmelVE=';
-        var baseURL = "https://core-cisco.bravais.com/api/v3";
-
-
-        function fetchData(URL) {
-            return fetch(URL, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'aplication/json',
-                    'Bravais-prod-us-Context': contextValue,
-                },
-                 mode: 'no-cors'
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            }).then(data => {
-                return data;
+        function fetchFavorites() {
+            const searchURL = `${baseURL}/favorites`;
+            return fetchData(searchURL).then(data => {
+                console.log('Data Received: ', data);
+                favoriteList = data;
+                return;
             }).catch(error => {
-                console.error('There was a problem with the fetch operation: ', error);
-                throw error;
+                console.error('Error: ', error);
             })
         }
 
-        function handleFilters(
-            welcomeElement,
-            resultsContainer,
-            resultsElement,
-            searchResults,
-            isUserAuthenticated) {
-            if (searchResults.length && isUserAuthenticated) {
-                welcomeElement.classList.add("hidden")
-                resultsElement.innerHTML = '';
-                searchResults.forEach(function (result, index) {
-                    var resultDiv = document.createElement('div');
-                    const text = index === 0 ? `${result.title}: ${result.lastUpdated}: ${result.description}: ` : `${result.title} ${result.lastUpdated} ${result.description} `;
-                    resultDiv.textContent = text;
-                    resultsElement.appendChild(resultDiv);
+        function CoursePage(itemId){
 
-                    const br = document.createElement("br");
-                    resultsElement.appendChild(br)
-                });
-                resultsContainer.classList.remove("hidden");
-            } else {
-                welcomeElement.classList.remove("hidden");
-                resultsContainer.classList.add("hidden");
-            }
         }
 
-        function handleUserView(
-            isUserAuthenticated,
-            loginButton,
-            filtersContainer,
-            loginUserSidebar,
-            coursesData,
-            searchResults,
-            favoriteList,
-            favoriteButtonContainer,
-            darkButtonContainer) {
-            // Authenticated user header, sideNav and dashboard
-            if (isUserAuthenticated) {
-                loginButton.innerText = "Log Out";
-                filtersContainer.classList.remove("hidden");
-                if (!searchResults.length) {
-                    loginUserSidebar.classList.remove("hidden");
-                    if (favoriteList.length) {
+        function Favourites(){
+            favoriteList = '';
+            fetchFavorites();
+            favoriteButtonContainer = document.getElementById('favorite-button-container');
+            if (favoriteList.length) {
                         favoriteList.forEach((item, index) => {
                             var button = document.createElement('button');
                             button.classList.add("ann-button");
                             button.id = `fav-button${index + 1}`;
                             button.textContent = item.itemName;
+                            button.onclick = CoursePage(item.itemId);
                             favoriteButtonContainer.appendChild(button);
-                        })
+            })
+        }
+    } 
 
-                        favoriteButtonContainer.classList.remove("hidden");
-                        darkButtonContainer.classList.add("hidden");
-                    } else {
-                        darkButtonContainer.classList.remove("hidden");
-                        favoriteButtonContainer.classList.add("hidden");
-                    }
-                    // favoriteList.length ? favoriteButtonContainer.classList.remove("hidden") : favoriteButtonContainer.classList.add("hidden")
-                    // !favoriteList.length ? darkButtonContainer.classList.remove("hidden") : darkButtonContainer.classList.add("hidden")
-                    if (coursesData && coursesData.length) {
-                        document.getElementById("ann-button1").textContent = coursesData[0];
-                        document.getElementById("ann-button2").textContent = coursesData[1];
-                        document.getElementById("ann-button3").textContent = coursesData[2];
-                    }
-                }
+        function My_Courses(){
+            document.getElementById('my_courses').classList.remove('hidden');
+            document.getElementById('landing_no_login').classList.add('hidden');
+            document.getElementById('landing_login').classList.add('hidden');
+            document.getElementById('search-results').classList.add('hidden');
+            document.getElementById('content-catalog').classList.add('hidden');
 
-            } else {
-                // Un Authenticated user header, sideNav and dashboard
-                loginButton.innerText = "Log In";
-                filtersContainer.classList.add("hidden");
-                loginUserSidebar.classList.add("hidden");
-            }
+        }
+
+        function Home(){
+            
+            document.getElementById('landing_no_login').classList.add('hidden');
+            document.getElementById('landing_login').classList.remove('hidden');
+            document.getElementById('search-results').classList.add('hidden');
+            document.getElementById('content-catalog').classList.add('hidden');
+            document.getElementById('my_courses').classList.add('hidden');
+            
         }
 
         function fetchSearchResults(inputValue) {
             const searchURL = `${baseURL}/search/?query=${inputValue}`;
             return fetchData(searchURL).then(data => {
                 console.log('Data Received: ', data);
-                resultsElement.innerHTML = '';
                 searchResults = [];
                 searchResults.push({
                     title: "Course Title",
@@ -330,51 +321,28 @@
             })
         }
 
-        function handleDOM() {
-            // filter results
-            handleFilters(welcomeElement,
-                resultsContainer,
-                resultsElement,
-                searchResults,
-                isUserAuthenticated);
+        function search(event) {
+            if (event.key === "Enter") {
+            var searchTerm = document.getElementById('search-box').value;
+            document.getElementById('landing_no_login').classList.add('hidden');
+            document.getElementById('landing_login').classList.add('hidden');
+            document.getElementById('content-catalog').classList.add('hidden');
+            document.getElementById('search-results').classList.remove('hidden');
+            document.getElementById('my_courses').classList.add('hidden');
+            searchReults = fetchSearchResults(inputValue)
+            var searchContainer = document.getElementById("search-results-container")
+            searchResults.forEach(function (result, index) {
+                    var resultDiv = document.createElement('div');
+                    const text = index === 0 ? `${result.title}: ${result.lastUpdated}: ${result.description}: ` : `${result.title} ${result.lastUpdated} ${result.description} `;
+                    resultDiv.textContent = text;
+                    resultsElement.appendChild(resultDiv);
 
-            // User view handle
-            handleUserView(
-                isUserAuthenticated,
-                loginButton,
-                filtersContainer,
-                loginUserSidebar,
-                coursesData,
-                searchResults,
-                favoriteList,
-                favoriteButtonContainer,
-                darkButtonContainer);
+                    const br = document.createElement("br");
+                    resultsElement.appendChild(br)
+                });
+            
         }
-
-        function fetchFavorites() {
-            const searchURL = `${baseURL}/favorites`;
-            return fetchData(searchURL).then(data => {
-                console.log('Data Received: ', data);
-                favoriteList = data;
-                return;
-            }).catch(error => {
-                console.error('Error: ', error);
-            })
-        }
-
-        async function main() {
-            await fetchFavorites();
-
-            const inputField = document.getElementById("search-box");
-            inputField.addEventListener('input', async function (event) {
-                const inputValue = event.target.value;
-                !!inputValue && isUserAuthenticated ? await fetchSearchResults(inputValue) : searchResults = [];
-                handleDOM();
-            });
-
-            handleDOM();
-
-        }
+    }
 
         document.addEventListener('DOMContentLoaded', function () {
             welcomeElement = document.getElementById('welcome');
@@ -386,137 +354,213 @@
             favoriteButtonContainer = document.getElementById('favorite-button-container');
             darkButtonContainer = document.getElementById('dark-button-container');
 
-            main();
         })
-
-        function contentCatalog(){
-            document.getElementById("course-button1").innerHTML = 'In Progress';
-            document.getElementById("course-button2").innerHTML = 'In Progress';
-            document.getElementById("course-button3").innerHTML = 'In Progress';
-            darkButtonContainer.classList.add("hidden");
-            filtersContainer.classList.remove("hidden");
-            favoriteButtonContainer.classList.remove("hidden");
-            resultsContainer.classList.add("hidden");
-
-        }
-
-        function My_Courses(){
-            document.getElementById("courses-table").classList.remove("hidden");
-            favoriteButtonContainer.classList.add("hidden");
-            resultsContainer.classList.add("hidden");
-
-        }
-
-        function Home(){
-            document.getElementById("course-button1").innerHTML = 'Most Recent Completion';
-            document.getElementById("course-button2").innerHTML = 'Most Recent Completion';
-            document.getElementById("course-button3").innerHTML = 'Most Recent Completion';
-            darkButtonContainer.classList.remove("hidden");
-            filtersContainer.classList.add("hidden");
-            favoriteButtonContainer.classList.add("hidden");
-            document.getElementById("courses-table").classList.add("hidden");
-            resultsContainer.classList.add("hidden");
-
-        }
     </script>
 </head>
 
 <body>
-    <div class="sidebar">
-        <h2>Welcome Guest</h2>
-        <a onclick="Home()">Home</a>
-        <a onclick="contentCatalog()">Content Catalog</a>
-        <div id="login-user-sidebar" class="hidden">
-            <a href="#home">My Report Card</a>
-            <a onclick="My_Courses()">My Courses</a>
-        </div>
-        <div id="filters-container" class="filters-container hidden">
-            <button class="filters-button">Filters</button>
-        </div>
-    </div>
+    <h1 id="test"></h1>
 
-    <div class="main">
+    <!-- ################ Landing Page ######################### -->
+    <div id="landing_no_login" class="hidden">
+        <div class="sidebar">
+            <h2>Welcome Guest</h2>
+            <a onclick="Home()">Home</a>
+            <a onclick="contentCatalog()">Content Catalog</a>
+        </div>
+        <div class="main">
         <div class="header">
-            <input type="text" id="search-box" class="search-box" placeholder="Search...">
+            
+                <input type="text" id="search-box" class="search-box" placeholder="Search..." onkeydown="search(event)">
             <button id="login-button" class="login-button">Log In</button>
         </div>
-        <div id="welcome">
-            <div class="welcome hidden">
-                <h2>Welcome to the CPaas Learning Portal</h2>
+        <div class="welcome">
+            <h2>Welcome to the CPaas Learning Portal</h2>
+        </div>
+        <div class="ann-container">
+            <button class="ann-button" id="ann-button1">Announcement 1</button>
+            <button class="ann-button" id="ann-button2">Announcement 2</button>
+            <button class="ann-button" id="ann-button3">Announcement 3</button>
+        </div>
+        <div class="dark-button-container" id="dark-button-container">
+            <button class="dark-button">AppD</button>
+            <button class="dark-button">TC2E</button>
+            <button class="dark-button">Space Center</button>
+            <button class="dark-button">Meraki</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- ################ Landing Page ######################### -->
+    <div id="landing_login" class="hidden">
+
+        <!-- ################ Side bar ######################### -->
+        <div class="sidebar">
+            <h2>Welcome Guest</h2>
+            <a onclick="Home()">Home</a>
+            <a onclick="contentCatalog()">Content Catalog</a>
+            <a onclick="My_Courses()">My Courses</a>
+            <div id="filters-container" class="filters-container">
+                <button class="filters-button">Filters</button>
             </div>
-            <div class="ann-container hidden">
-                <button class="ann-button" id="ann-button1">Announcement 1</button>
-                <button class="ann-button" id="ann-button2">Announcement 2</button>
-                <button class="ann-button" id="ann-button3">Announcement 3</button>
+        </div>
+
+        <!-- ################ Search bar ######################### -->
+        <div class="main">
+            
+            <div class="header">
+                
+                    <input type="text" id="search-box" class="search-box" placeholder="Search..." onkeydown="search(event)">
+                <button id="login-button" class="login-button">Log In</button>
             </div>
-            <div class="myCourses">
-                <h2>My Courses</h2>
-            </div>
-            <div class="courses-container">
-                <button class="ann-button" id="course-button1">Most Recent Completion</button>
-                <button class="ann-button" id="course-button2">Most Recent Completion</button>
-                <button class="ann-button" id="course-button3">Most Recent Completion</button>
-            </div>
-            <div class="table-container hidden" id="courses-table">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Type</th>
-                            <th>Percent</th>
-                            <th>Complete In Full/Yes?</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="in-progress">
-                            <td>name</td>
-                            <td>Learning Path</td>
-                            <td>50%</td>
-                            <td>Completed</td>
-                        </tr>
-                        <tr class="in-progress">
-                            <td>name</td>
-                            <td>Learning Path</td>
-                            <td>100%</td>
-                            <td>In Progress</td>
-                        </tr>
-                        <tr class="in-progress">
-                            <td>name</td>
-                            <td>Learning Path</td>
-                            <td>10%</td>
-                            <td>In Progress</td>
-                        </tr>
-                        <tr class="in-progress">
-                            <td>name</td>
-                            <td>Learning Path</td>
-                            <td>50%</td>
-                            <td>In Progress</td>
-                        </tr>
-                        <tr class="in-progress">
-                            <td>name</td>
-                            <td>Learning Path</td>
-                            <td>50%</td>
-                            <td>In Progress</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="dark-button-container hidden" id="dark-button-container">
-                <button class="dark-button">AppD</button>
-                <button class="dark-button">TC2E</button>
-                <button class="dark-button">Space Center</button>
-                <button class="dark-button">Meraki</button>
-            </div>
-            <div class="favorite-button-container hidden" id="favorite-button-container">
-                <p>Favorites</p>
-                <!-- <button class="ann-button" id="fav-button1">fav 1</button> -->
-            </div>
+
+                <div class="ann-container">
+                    <button class="ann-button" id="course-button1">In Progress</button>
+                    <button class="ann-button" id="course-button2">In Progress</button>
+                    <button class="ann-button" id="course-button3">In Progress</button>
+                </div>
+                <div class="favorite-button-container" id="favorite-button-container">
+                    <p>Favorites</p>
+                    <!-- <button class="ann-button" id="fav-button1">fav 1</button> -->
+                </div>
+        </div>
+
+
+    </div>
+
+    <!-- ################ Search Results ######################### -->
+    <div id="search-results" class="hidden">
+        <div class="sidebar">
+            <h2>Welcome Guest</h2>
+            <a onclick="Home()">Home</a>
+            <a onclick="contentCatalog()">Content Catalog</a>
+        </div>
+        <div class="main">
+        <div class="header">
+            
+                <input type="text" id="search-box" class="search-box" placeholder="Search..." onkeydown="search(event)">
+            <button id="login-button" class="login-button">Log In</button>
         </div>
         <div id="search-results-container">
             <h2>Search Results</h2>
             <div id="search-results"></div>
         </div>
+        </div>
     </div>
+    </div>
+
+     <!-- ################ Search Results ######################### -->
+
+     <div id="content-catalog" class="hidden">
+        <div class="sidebar">
+            <h2>Welcome Guest</h2>
+            <a onclick="Home()">Home</a>
+            <a onclick="contentCatalog()">Content Catalog</a>
+            <a onclick="My_Courses()">Content Catalog</a>
+        </div>
+        <div class="main">
+        <div class="header">
+            
+                <input type="text" id="search-box" class="search-box" placeholder="Search..." onkeydown="search(event)">
+            <button id="login-button" class="login-button">Log In</button>
+        </div>
+        <h2>Recently Published</h2>
+        <div class="ann-container">
+            <button class="ann-button" id="course-button1">In Progress</button>
+            <button class="ann-button" id="course-button2">In Progress</button>
+            <button class="ann-button" id="course-button3">In Progress</button>
+        </div>
+        <h2>Favorites</h2>
+        <div class="favorite-button-container" id="favorite-button-container">
+            <p>Favorites</p>
+            <!-- <button class="ann-button" id="fav-button1">fav 1</button> -->
+        </div>
+        <h2>All content</h2>
+        <div class="ann-container">
+            <button class="ann-button" id="course-button1">In Progress</button>
+            <button class="ann-button" id="course-button2">In Progress</button>
+            <button class="ann-button" id="course-button3">In Progress</button>
+        </div>
+        
+        </div>
+    </div>
+    </div>
+
+    <!-- ################ Search Results ######################### -->
+
+    <div id="my_courses">
+        <div class="sidebar">
+            <h2>Welcome Guest</h2>
+            <a onclick="Home()">Home</a>
+            <a onclick="contentCatalog()">Content Catalog</a>
+        </div>
+        <div class="main">
+        <div class="header">
+            
+                <input type="text" id="search-box" class="search-box" placeholder="Search..." onkeydown="search(event)">
+            <button id="login-button" class="login-button">Log In</button>
+        </div>
+        <div class="ann-container">
+            <button class="ann-button" id="ann-button1">Most Recent Publication</button>
+            <button class="ann-button" id="ann-button2">Most Recent Publication</button>
+            <button class="ann-button" id="ann-button3">Most Recent Publication</button>
+        </div>
+        <div class="button-container">
+            <button class="curvy-button" onclick="clickText1()">AppD</button>
+            <button class="curvy-button" onclick="clickText2()">TC2E</button>
+            <button class="curvy-button" onclick="clickText3()">Space Center</button>
+            <button class="curvy-button" onclick="clickText3()">Meraki</button>
+        </div>
+        
+        <div class="table-container" id="courses-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Type</th>
+                        <th>Percent</th>
+                        <th>Complete In Full/Yes?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="in-progress">
+                        <td>name</td>
+                        <td>Learning Path</td>
+                        <td>50%</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr class="in-progress">
+                        <td>name</td>
+                        <td>Learning Path</td>
+                        <td>100%</td>
+                        <td>In Progress</td>
+                    </tr>
+                    <tr class="in-progress">
+                        <td>name</td>
+                        <td>Learning Path</td>
+                        <td>10%</td>
+                        <td>In Progress</td>
+                    </tr>
+                    <tr class="in-progress">
+                        <td>name</td>
+                        <td>Learning Path</td>
+                        <td>50%</td>
+                        <td>In Progress</td>
+                    </tr>
+                    <tr class="in-progress">
+                        <td>name</td>
+                        <td>Learning Path</td>
+                        <td>50%</td>
+                        <td>In Progress</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+        
+        </div>
+
+    
 </body>
 
 </html>
