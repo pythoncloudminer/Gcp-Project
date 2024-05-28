@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Data</title>
+</head>
+<body>
+    <h1>Cookie Data</h1>
+    <div id="cookieData"></div>
+
+    <script>
+        var contextValue = 'TZgF5QdOpR2/hJbm0hUS7gUxaDTw97FFId+U24rVi3a9ZazVIPrfdZUtmL0F6/3APztBzNhE6+wXygSBALxv31GV5UWZi1Lu2/KZRKqMlBeaS9d6DS2Brqs11tFooede11BjeLi/RCl1h988P+BB0KBH+efTCmRRBcHaoN84NlXJowtMCvJMcZlwfzCbfpXVUCSK5B7Vlkq7LwrgecUs1rHIeJ0lc+TntxMm7kMpgix0xqIV5UPjRMXiDwSqRfE8ejI/zTqf5AdFij+dIeUHIbcTJu5DKYIsZGhZ5QmelVE=';
+        var baseURL = "https://core-cisco.bravais.com/api/v3";
+        var apiUrl = "https://core-cisco.bravais.com/api/v3/search?query=tc2e";
+
+        function fetchData(URL) {
+            return fetch(URL, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'aplication/json',
+                    'Bravais-prod-us-Context': contextValue,
+                },
+                 mode: 'no-cors'
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            }).then(data => {
+                console.log(data)
+                return data;
+            }).catch(error => {
+                console.error('There was a problem with the fetch operation: ', error);
+                throw error;
+            })
+        }
+
+        function displayCookieData() {
+            var cookieString = document.cookie;
+            var cookieArray = cookieString.split(';');
+            var cookieDataDiv = document.getElementById('cookieData');
+
+            if (cookieArray.length === 1 && cookieArray[0] === "") {
+                cookieDataDiv.innerText = "No cookies found.";
+            } else {
+                var cookieHTML = "<ul>";
+                cookieArray.forEach(function(cookie) {
+                    var cookiePair = cookie.split('=');
+                    var cookieName = cookiePair[0].trim();
+                    var cookieValue = cookiePair[1];
+                    cookieHTML += "<li><strong>" + cookieName + ":</strong> " + cookieValue + "</li>";
+                });
+                cookieHTML += "</ul>";
+                cookieDataDiv.innerHTML = cookieHTML;
+            }
+        }
+        window.onload = function() {
+            displayCookieData();
+        };
+    </script>
+</body>
+</html>
