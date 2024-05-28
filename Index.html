@@ -216,7 +216,7 @@
     }
     /* Styles for the button */
     .curvy-button {
-        background-color: #b21cf3; /* Green */
+        background-color: #1f26e8; /* Green */
         border: none;
         color: white;
         text-align: center;
@@ -243,6 +243,7 @@
             document.getElementById('landing_login').classList.add('hidden');
             document.getElementById('search-results').classList.add('hidden');
             document.getElementById('content-catalog').classList.remove('hidden');
+            Favourites();
 
 
         }
@@ -266,6 +267,7 @@
             favoriteList = '';
             fetchFavorites();
             favoriteButtonContainer = document.getElementById('favorite-button-container');
+            favoriteButtonContainer.innerHTML='';
             if (favoriteList.length) {
                         favoriteList.forEach((item, index) => {
                             var button = document.createElement('button');
@@ -294,6 +296,7 @@
             document.getElementById('search-results').classList.add('hidden');
             document.getElementById('content-catalog').classList.add('hidden');
             document.getElementById('my_courses').classList.add('hidden');
+            Favourites();
             
         }
 
@@ -331,6 +334,7 @@
             document.getElementById('my_courses').classList.add('hidden');
             searchReults = fetchSearchResults(inputValue)
             var searchContainer = document.getElementById("search-results-container")
+            searchContainer.innerHTML = ''
             searchResults.forEach(function (result, index) {
                     var resultDiv = document.createElement('div');
                     const text = index === 0 ? `${result.title}: ${result.lastUpdated}: ${result.description}: ` : `${result.title} ${result.lastUpdated} ${result.description} `;
