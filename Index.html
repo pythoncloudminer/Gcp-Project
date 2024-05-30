@@ -417,7 +417,7 @@ cookies.forEach(function(cookie) {
                     var resultDiv = document.createElement('div');
                     const text = index === 0 ? `${result.title}: ${result.lastUpdated}: ${result.description}: ` : `${result.title} ${result.lastUpdated} ${result.description} `;
                     resultDiv.textContent = text;
-                    resultDiv.onclick = LaunchPage(result.id)
+                    resultDiv.onclick = CoursePage(result.id)
                     resultsElement.appendChild(resultDiv);
 
                     const br = document.createElement("br");
